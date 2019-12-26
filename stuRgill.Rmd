@@ -472,8 +472,9 @@ sentiment_sturgill_combined <- sturgill %>%
     inner_join(sentiment_sturgill_track_sum, by = "track_name")
 
 sentiment_sturgill_combined %>%
-    ggplot(aes(x = neg_emotions, y = valence)) +
+    ggplot(aes(x = neg_emotions, y = valence, label = track_name)) +
     geom_point() + 
+    geom_text(size = 3, check_overlap = TRUE) + 
     theme(panel.background = element_rect(fill = "white")) +
     theme(plot.background = element_rect(fill = "white")) +
     ggtitle("Sturgill Simpson's Music:
