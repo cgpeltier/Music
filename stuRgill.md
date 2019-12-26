@@ -181,7 +181,7 @@ sturgill %>%
 ## Picking joint bandwidth of 0.131
 ```
 
-![](stuRgill_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
+![](stuRgill_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
 
 ```r
 # Avg valence by album
@@ -269,7 +269,7 @@ ggplot(sturgill, aes(x = album_name, y = sonic_cohesiveness, color = album_name)
     ylab("Sonic cohesiveness")
 ```
 
-![](stuRgill_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
+![](stuRgill_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
 
 ```r
 ggplot(sturgill, aes(x = album_name, y = energy, color = album_name)) + 
@@ -281,7 +281,7 @@ ggplot(sturgill, aes(x = album_name, y = energy, color = album_name)) +
     ylab("Energy")
 ```
 
-![](stuRgill_files/figure-html/unnamed-chunk-13-2.png)<!-- -->
+![](stuRgill_files/figure-html/unnamed-chunk-5-2.png)<!-- -->
 
 ```r
 sturgill %>%
@@ -299,7 +299,7 @@ sturgill %>%
 ## Picking joint bandwidth of 0.0995
 ```
 
-![](stuRgill_files/figure-html/unnamed-chunk-13-3.png)<!-- -->
+![](stuRgill_files/figure-html/unnamed-chunk-5-3.png)<!-- -->
 
 Within the boxplots for sonic cohesiveness, we would expect that the more sonically cohesive album would have a more narrow distribution sonic cohesiveness (in particular a more narrow interquartile range). This first chart shows that *Metamodern Sounds in Country Music* appears to be the most cohesive, while 
 *A Sailor's Guide to Earth* is sonically varied -- which is interesting, considering the album is essentially a musical letter to his then-newborn son. 
@@ -324,7 +324,7 @@ merle <- get_artist_audio_features("Merle Haggard")
 ```
 
 ```
-## Request failed [429]. Retrying in 2 seconds...
+## Request failed [429]. Retrying in 1 seconds...
 ```
 
 ```r
@@ -372,7 +372,7 @@ artist_comp %>%
 ## Picking joint bandwidth of 0.0777
 ```
 
-![](stuRgill_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
+![](stuRgill_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
 
 ```r
 artist_comp %>%
@@ -390,7 +390,7 @@ artist_comp %>%
 ## Picking joint bandwidth of 0.105
 ```
 
-![](stuRgill_files/figure-html/unnamed-chunk-14-2.png)<!-- -->
+![](stuRgill_files/figure-html/unnamed-chunk-6-2.png)<!-- -->
 
 There are some fairly clear differences between the three artists despite us only looking at Sturgill's first album. In the plot of song energy, Sturgill's distribution is clearly left-tailed and higher energy, Merle has the larger percentage of lower-energy songs, and Waylon's songs are more concentrated and mid-energy.  
 
@@ -434,7 +434,7 @@ wordcloud(words = word_count$word, freq = word_count$n,
           max.words = 100, random.order = FALSE)
 ```
 
-![](stuRgill_files/figure-html/unnamed-chunk-15-1.png)<!-- -->
+![](stuRgill_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
 
 ```r
 ## for each album
@@ -470,28 +470,28 @@ p1 <- wordcloud(words = word_count_htm$word, freq = word_count_htm$n,
           max.words = 100, random.order = FALSE)
 ```
 
-![](stuRgill_files/figure-html/unnamed-chunk-15-2.png)<!-- -->
+![](stuRgill_files/figure-html/unnamed-chunk-7-2.png)<!-- -->
 
 ```r
 p2 <- wordcloud(words = word_count_ms$word, freq = word_count_ms$n,
           max.words = 100, random.order = FALSE)
 ```
 
-![](stuRgill_files/figure-html/unnamed-chunk-15-3.png)<!-- -->
+![](stuRgill_files/figure-html/unnamed-chunk-7-3.png)<!-- -->
 
 ```r
 p3 <- wordcloud(words = word_count_sge$word, freq = word_count_sge$n,
           max.words = 100, random.order = FALSE)
 ```
 
-![](stuRgill_files/figure-html/unnamed-chunk-15-4.png)<!-- -->
+![](stuRgill_files/figure-html/unnamed-chunk-7-4.png)<!-- -->
 
 ```r
 p4 <- wordcloud(words = word_count_sf$word, freq = word_count_sf$n,
           max.words = 100, random.order = FALSE)
 ```
 
-![](stuRgill_files/figure-html/unnamed-chunk-15-5.png)<!-- -->
+![](stuRgill_files/figure-html/unnamed-chunk-7-5.png)<!-- -->
 
 # Lyrics analysis - NRC by album
 Next we can look at lyrics by album according to the NRC leixcon, which sorts words into eight categories -- joy, anticipation, trust, surprise, sadness, anger, disgust and fear. 
@@ -528,8 +528,8 @@ sentiment_sturgill_radar <- sentiment_sturgill %>%
 chartJSRadar(sentiment_sturgill_radar)
 ```
 
-<!--html_preserve--><canvas id="htmlwidget-e2dadfe1dee267872a69" class="chartJSRadar html-widget" width="672" height="480"></canvas>
-<script type="application/json" data-for="htmlwidget-e2dadfe1dee267872a69">{"x":{"data":{"labels":["anger","anticipation","disgust","fear","joy","sadness","surprise","trust"],"datasets":[{"label":"SOUND & FURY","data":[0.123,0.175,0.084,0.149,0.13,0.146,0.065,0.127],"backgroundColor":"rgba(255,0,0,0.2)","borderColor":"rgba(255,0,0,0.8)","pointBackgroundColor":"rgba(255,0,0,0.8)","pointBorderColor":"#fff","pointHoverBackgroundColor":"#fff","pointHoverBorderColor":"rgba(255,0,0,0.8)"},{"label":"A Sailor's Guide to Earth","data":[0.113,0.131,0.055,0.164,0.172,0.161,0.033,0.172],"backgroundColor":"rgba(0,255,0,0.2)","borderColor":"rgba(0,255,0,0.8)","pointBackgroundColor":"rgba(0,255,0,0.8)","pointBorderColor":"#fff","pointHoverBackgroundColor":"#fff","pointHoverBorderColor":"rgba(0,255,0,0.8)"},{"label":"Metamodern Sounds in Country Music","data":[0.109,0.187,0.056,0.141,0.158,0.144,0.039,0.165],"backgroundColor":"rgba(0,0,255,0.2)","borderColor":"rgba(0,0,255,0.8)","pointBackgroundColor":"rgba(0,0,255,0.8)","pointBorderColor":"#fff","pointHoverBackgroundColor":"#fff","pointHoverBorderColor":"rgba(0,0,255,0.8)"},{"label":"High Top Mountain","data":[0.117,0.151,0.099,0.129,0.129,0.167,0.052,0.156],"backgroundColor":"rgba(255,255,0,0.2)","borderColor":"rgba(255,255,0,0.8)","pointBackgroundColor":"rgba(255,255,0,0.8)","pointBorderColor":"#fff","pointHoverBackgroundColor":"#fff","pointHoverBorderColor":"rgba(255,255,0,0.8)"}]},"options":{"responsive":true,"title":{"display":false,"text":null},"scale":{"ticks":{"min":0},"pointLabels":{"fontSize":18}},"tooltips":{"enabled":true,"mode":"label"},"legend":{"display":true}}},"evals":[],"jsHooks":[]}</script><!--/html_preserve-->
+<!--html_preserve--><canvas id="htmlwidget-4a2c5105766f05a65d41" class="chartJSRadar html-widget" width="672" height="480"></canvas>
+<script type="application/json" data-for="htmlwidget-4a2c5105766f05a65d41">{"x":{"data":{"labels":["anger","anticipation","disgust","fear","joy","sadness","surprise","trust"],"datasets":[{"label":"SOUND & FURY","data":[0.123,0.175,0.084,0.149,0.13,0.146,0.065,0.127],"backgroundColor":"rgba(255,0,0,0.2)","borderColor":"rgba(255,0,0,0.8)","pointBackgroundColor":"rgba(255,0,0,0.8)","pointBorderColor":"#fff","pointHoverBackgroundColor":"#fff","pointHoverBorderColor":"rgba(255,0,0,0.8)"},{"label":"A Sailor's Guide to Earth","data":[0.113,0.131,0.055,0.164,0.172,0.161,0.033,0.172],"backgroundColor":"rgba(0,255,0,0.2)","borderColor":"rgba(0,255,0,0.8)","pointBackgroundColor":"rgba(0,255,0,0.8)","pointBorderColor":"#fff","pointHoverBackgroundColor":"#fff","pointHoverBorderColor":"rgba(0,255,0,0.8)"},{"label":"Metamodern Sounds in Country Music","data":[0.109,0.187,0.056,0.141,0.158,0.144,0.039,0.165],"backgroundColor":"rgba(0,0,255,0.2)","borderColor":"rgba(0,0,255,0.8)","pointBackgroundColor":"rgba(0,0,255,0.8)","pointBorderColor":"#fff","pointHoverBackgroundColor":"#fff","pointHoverBorderColor":"rgba(0,0,255,0.8)"},{"label":"High Top Mountain","data":[0.117,0.151,0.099,0.129,0.129,0.167,0.052,0.156],"backgroundColor":"rgba(255,255,0,0.2)","borderColor":"rgba(255,255,0,0.8)","pointBackgroundColor":"rgba(255,255,0,0.8)","pointBorderColor":"#fff","pointHoverBackgroundColor":"#fff","pointHoverBorderColor":"rgba(255,255,0,0.8)"}]},"options":{"responsive":true,"title":{"display":false,"text":null},"scale":{"ticks":{"min":0},"pointLabels":{"fontSize":18}},"tooltips":{"enabled":true,"mode":"label"},"legend":{"display":true}}},"evals":[],"jsHooks":[]}</script><!--/html_preserve-->
 
 ```r
 ## bar plot
@@ -539,7 +539,7 @@ ggplot(sentiment_sturgill, aes(x = sentiment, y = perc, fill = album_name)) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-![](stuRgill_files/figure-html/unnamed-chunk-16-2.png)<!-- -->
+![](stuRgill_files/figure-html/unnamed-chunk-8-2.png)<!-- -->
 
 Across his albums, surprise, disgust, and anger are fairly infrequent emotions expressed in his lyrics, with relatively high levels of fear, joy, sadness, and trust. 
 
@@ -625,7 +625,7 @@ Negative-Sentiment Lyrics vs. Valence") +
     ylab("Happiness (Valence score)")
 ```
 
-![](stuRgill_files/figure-html/unnamed-chunk-18-1.png)<!-- -->
+![](stuRgill_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
 
 As the resulting plot shows, there appears to be little relationship between a song's lyrics and how happy or sad the song itself is. That makes for interesting contrasts between lyrical sentiment and a song's feeling. 
 
