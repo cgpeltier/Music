@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
 ```
 
 This project is designed to compare Fleet Foxes' four albums. It uses the spotifyr and geniusr packages to download song features and lyrics, allowing for text analysis of lyrics for each track. I'll use various NLP tools, including sentiment analysis and LDA to provide unsupervised classification of tracks on each album. 
@@ -30,6 +30,8 @@ library(textrecipes)
 # Pull data
 Here we pull data from Spotify, keeping just the four main albums in Spotify: *Fleet Foxes*, *Helplessness Blues*, *Crack-Up*, and *Shore*, which was just released in October 2020.
 
+The spotifyr package makes this easy, allowing us to search by artist name and then just filter down to the albums we're looking for. I also do a little bit of cleaning for the join with the geniusr data. Because we have to join by track name, I create a simplified track name column just for the join that converts strings to lower and removes punctuation.  
+
 ```{r}
 ## Spotify data
 ff <- get_artist_audio_features("fleet foxes") %>%
@@ -47,7 +49,7 @@ ff2 <- ff %>%
 
 ```
 
-The code chunk below uses the geniusr package to pull lyrics. 
+The code chunk below uses the geniusr package to pull lyrics. First we need to do a text search for the artist ID, then we can get a dataframe of songs using that ID. From there, we can purrr across song IDs to get the lyrics. Because the lyrics are reported in the geniusr package by line, I then use group_by, summarize, and paste0 with the collapse argument to collapse all lines of lyrics into a single row per song. I then do the same song name cleaning to join with the Spotify data. 
 
 ```{r}
 ## Genus lyrics data
@@ -62,7 +64,7 @@ ff_lyrics <- map(ff_songs$song_id, get_lyrics_id) %>%
 ff_lyrics2 <- ff_lyrics %>%
     select(song_name, line, song_id) %>%
     group_by(song_id, song_name) %>%
-    summarize(line = paste0(line, collapse = " ")) %>%
+    dplyr::summarize(line = paste0(line, collapse = " ")) %>%
     filter(!str_detect(song_name, "Booklet")) %>%
     mutate(song_name_clean = str_to_lower(song_name),
            song_name_clean = str_replace_all(song_name_clean, "[:punct:]", " "))
@@ -78,6 +80,9 @@ Finally, we can combine the song features and lyrics into a single data frame.
 ```{r }
 ## Combine lyrics and song features
 
+album_order <- c("Shore",  "Crack-Up", "Helplessness Blues",  "Fleet Foxes")
+
+
 ff_combined <- ff2 %>%
     left_join(ff_lyrics2, by = c("track_name_clean" = "song_name_clean")) %>%
     select(-track_name_clean, song_name) %>%
@@ -89,11 +94,12 @@ ff_combined <- ff2 %>%
 
 
 # Album analysis
-First, we'll compare the how the various song features tracked by Spotify (danceability, energy, etc.) change across the four albums. My overall expectation is that the Fleet Foxes and Helplessness Blues albums are fairly similar, Crack-Up has a much more dissonance and lower valence, and Shore has higher valence. 
+First, we'll compare the how the various song audio features tracked by Spotify (danceability, energy, valence, etc.) change across the four albums. 
+
+My overall expectation is that the Fleet Foxes and Helplessness Blues albums are fairly similar, Crack-Up has a much more dissonance and lower valence, and Shore has higher valence. 
 
 ```{r message=FALSE}
 
-album_order <- c("Shore",  "Crack-Up", "Helplessness Blues",  "Fleet Foxes")
 
 ff_combined %>%
     pivot_longer(danceability:tempo) %>% 
@@ -103,9 +109,6 @@ ff_combined %>%
         facet_wrap(~ name, scales = "free_x") + 
         theme_classic() +
         theme(legend.position = "none")
-
-ff_combined
-
 
 ```
 
@@ -130,10 +133,11 @@ map(vars, ~ ff_combined %>%
 
 Some overall takeaways:
 
-* Not surprised that Crack-Up has a uni-modal distribution of loud songs. Shore has a more uniform distribution of most song features, but especially loudness. 
-* Crack-Up is also distinctive in its distribution of keys, which has a much more concentrated distribution than the other albums. 
-* As expected, Crack-Up also sticks out in its valence distribution, with a uni-modal, low distribution. Shore is bi-modal, with concentrations of happier and sadder-sounding songs. 
+* Shore has a more uniform distribution of most song features, but especially loudness. 
+* Crack-Up is also distinctive in its distribution of keys, which has a much more concentrated (and higher!) distribution than the other albums. 
+* As expected, Crack-Up also sticks out in its valence distribution, with a uni-modal, low distribution. Shore is bi-modal, with concentrations of happier and sadder-sounding songs. Overall, Crack-Up is less sonically varied than the other three albums by key, energy, loudness, and valence -- which is especially interesting because it was a fairly significant departure from the first two albums and is very musically varied. For example, [NME described it](https://www.nme.com/reviews/fleet-foxes-crack-up-review-2087403) as "Melodies bleed into one another both between tracks and within them, making the listening experience feel almost classical."
 * Most songs' tempos are a little slower on Shore than the previous two albums, though there is a second peak of higher-tempo songs. The first album, Fleet Foxes, stands out in this regard. 
+* Danceability is interesting. Spotify describes danceability as "how suitable a track is for dancing based on a combination of musical elements including tempo, rhythm stability, beat strength, and overall regularity", with 1 being most danceable. It is interesting that Fleet Foxes and Shore have the most danceable songs... especially when I wouldn't really say that any of their songs are all that danceable! Given that the album's tempo distribution isn't very high, that suggests its relatively higher danceability comes from tracks' beat strength and rhythm stability. 
 
 
 # Tracks
@@ -200,8 +204,8 @@ ff_combined %>%
 ```
 
 * Battery Kinzie is by far the highest valence song. I'm also not surprised to see Young Man's Game and Lorelai in the top 6. The Plains / Bitter Dancer and Fool's Errand are fitting for the lowest valence tracks. And 3 of the bottom 6 valence songs are on Crack-Up.
-* I wouldn't necessarily say any Fleet Foxes song is really all that danceable...
 * 5 of the top 6 (and 7 of 9) highest energy songs are all on Shore! 
+* In general there's a positive relationship between energy and valence, although it appears to be most pronounced after energy rises above 0.4 or so. Lower energy songs are all relatively low valence, but a mid-low energy song (like The Plains / Bitter Dancer or Sun it Rises) isn't necessarily happier-sounding than an even lower energy song like Oliver James. But after 0.6 energy, most songs are happier sounding. 
 
 # Tracks and Sentiment Analysis
 Next we can bring in some sentiments from the nrc data to compare whether valence aligns with positive vs. negative lyrics on individual tracks. Do some songs sound happy but have negative lyrics, or vice versa?
@@ -234,7 +238,9 @@ ff_sentiment %>%
 
 ```
 
-Some of the sentiment analysis is tough because there aren't a ton of words per song that have a sentiment in the nrc lexicon. However, it is interesting that many of the top valence songs, like Battery Kinzie, White Winter Hymnal, Lorelai, and Can I Believe you all have 50% or less positive emotions. That's not surprising for Can I Believe You, which sounds upbeat but is about relationship trust issues. 
+Some of the sentiment analysis is tough because there aren't a ton of words per song that have a sentiment in the nrc lexicon. However, it is interesting that many of the top valence songs, like "Battery Kinzie", "White Winter Hymnal", "Lorelai", and "Can I Believe You" all have 50% or less positive emotions. That's not surprising for Can I Believe You, which sounds upbeat but is about relationship trust issues. 
+
+Overall the relationship between a song's negative lyrics and valence is complicated. Some songs, like "On Another Ocean (January / June)" are both negative and sad-sounding. However, other songs, like "Your Protector" and "Oliver James" sound fairly sad, but have mostly happy lyrics (at least for the words in which there was a corresponding nrc sentiment). 
 
 
 # LDA
@@ -248,7 +254,7 @@ ff_dtm <- ff_combined %>%
     count(track_name, word, sort = TRUE) %>%
     cast_dtm(track_name, word, n)
 
-ff_lda <- LDA(ff_dtm, k = 5, control = list(seed = 123))
+ff_lda <- LDA(ff_dtm, k = 3, control = list(seed = 123))
 
 
 
@@ -258,7 +264,7 @@ ff_topics <- ff_lda %>%
 
 ff_top_terms <- ff_topics %>%
     group_by(topic) %>%
-    top_n(5, abs(beta)) %>%
+    top_n(10, abs(beta)) %>%
     ungroup() %>%
     arrange(topic, desc(beta))
 
@@ -274,15 +280,14 @@ ff_top_terms %>%
 
 ```
 
-So, our LDA algorithm found the following topics:
+So, our LDA algorithm found the following topics with k = 3:
 
-1. Songs with lyrics about the morning, with home-y related words (lie, home, apples).
-2. Lyrics dominated by time, as well as walking with the devil. 
-3. Nature-dominated imagery -- the ocean, rising, light and dark. 
-4. Another morning/sleep-focused topic, that seems to contrast with night-time and sleep-focused imagery (night, home, light, dream).
-5. Water and memory-focused focused lyrics.
+1. Songs related to **night and the morning**. These are time-related, but the top words associated with this topic are specific to the morning, night, and dreams. 
+2. Topic 2 is also time-focused, but the passage of time in a bigger sense -- related to **death and existential concerns**. Here, the devil (another death-related) is important, as is the color red ("With scarves of red tied 'round their throats... Red as strawberries in the summertime" from "White Winter Hymnal"). This topic might be exemplified by "Oh, devil walk by, oh, devil walk by (I never want to die, I never want to die)" from "Quiet Air / Gioia." That song has the third-highest gamma within the seocnd topic.
+3. The third topic is a little more **pastoral / nature-focused** than the other two, although nature, time, and existential concerns are kind of universal Fleet Foxes themes. This includes words like light, ocean, rising, and dawn.
 
-Seeing these 5 topics, it's clear that nature, memory, light and darkness all factor heavily across all Fleet Foxes lyrics. 
+
+Seeing these 3 topics, it's clear that nature, time, light and darkness all factor heavily across all Fleet Foxes lyrics. 
 
 Finally, we can classify each song into one of the above topics.
 
